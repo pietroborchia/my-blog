@@ -1,10 +1,4 @@
 
----
-layout: default
-title: Home
----
-
-# Latest posts
 
 <h1 class="home-name">Pietro Borchia</h1>
 
