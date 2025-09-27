@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Home
+hide_header: true
 ---
 
 <h1 class="home-name">Pietro Borchia</h1>
