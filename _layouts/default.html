@@ -16,13 +16,11 @@
   {% endif %}
 </head>
 <body>
-  <header class="site-header container">
-    <a class="brand" href="{{ "/" | relative_url }}">{{ site.title }}</a>
-    <nav>
-      <a href="{{ "/" | relative_url }}">Home</a>
-      <a href="{{ "/about/" | relative_url }}">About</a>
-    </nav>
-  </header>
+  {% unless page.url == "/" %}
+    <header class="site-header container">
+      <a class="brand" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    </header>
+  {% endunless %}
   <main class="container">
     {{ content }}
   </main>
