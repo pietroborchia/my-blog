@@ -18,3 +18,16 @@ Docs:
 - GitHub Pages + Jekyll: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll
 - Jekyll `relative_url` filter: https://jekyllrb.com/docs/liquid/filters/
 - KaTeX auto-render: https://katex.org/docs/autorender.html
+
+The repository structure is the following:
+repo/
+├─ _config.yml
+├─ _layouts/
+│  └─ default.html        <-- base template (KaTeX here once)
+├─ _includes/
+│  └─ katex.html          <-- optional: keep KaTeX block separate
+├─ _posts/
+│  └─ 2025-09-27-hello.md <-- a sample post (uses the layout)
+├─ assets/
+│  └─ style.css
+└─ index.md               <-- homepage
