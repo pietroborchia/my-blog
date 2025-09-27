@@ -1,7 +1,6 @@
 
-title: "Pietro Borchia — Blog"
-description: "Notes on physics, code, and more."
-url: "https://USERNAME.github.io"
-baseurl: "/REPO-NAME"
+title: "Pietro Borchia"
+url: "https://pietroborchia.github.io"
+baseurl: "/my-blog"
 theme: null
 markdown: kramdown
