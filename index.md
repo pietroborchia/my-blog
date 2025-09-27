@@ -6,11 +6,9 @@ title: Home
 
 # Latest posts
 
-<ul>
-{% for post in site.posts %}
-  <li>
-    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    <small>— {{ post.date | date: "%B %d, %Y" }}</small>
-  </li>
-{% endfor %}
-</ul>
+<h1 class="home-name">Pietro Borchia</h1>
+
+<nav class="home-nav">
+  <a href="{{ '/posts/' | relative_url }}">Posts</a>
+  <a href="{{ '/about/' | relative_url }}">About</a>
+</nav>
