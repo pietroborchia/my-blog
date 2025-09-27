@@ -20,14 +20,14 @@ Docs:
 - KaTeX auto-render: https://katex.org/docs/autorender.html
 
 The repository structure is the following:
-repo/
-├─ _config.yml
-├─ _layouts/
-│  └─ default.html        <-- base template (KaTeX here once)
-├─ _includes/
-│  └─ katex.html          <-- optional: keep KaTeX block separate
-├─ _posts/
-│  └─ 2025-09-27-hello.md <-- a sample post (uses the layout)
-├─ assets/
-│  └─ style.css
-└─ index.md               <-- homepage
+repo/ <br>
+├─ _config.yml <br>
+├─ _layouts/ <br>
+│  └─ default.html        <-- base template (KaTeX here once) <br>
+├─ _includes/ <br>
+│  └─ katex.html          <-- optional: keep KaTeX block separate <br>
+├─ _posts/ <br>
+│  └─ 2025-09-27-hello.md <-- a sample post (uses the layout) <br>
+├─ assets/ <br>
+│  └─ style.css <br>
+└─ index.md               <-- homepage <br>
