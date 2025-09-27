@@ -1,4 +1,7 @@
-
+---
+layout: default
+title: Home
+---
 
 <h1 class="home-name">Pietro Borchia</h1>
 
