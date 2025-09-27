@@ -23,7 +23,7 @@ pre { background: #f6f8fa; padding: .75rem; border-radius: 10px; overflow: auto;
 .katex-display > .katex { white-space: normal; }
 .katex-display > .base { margin: 0.25em 0; }
 
-.home-name { font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.5rem); margin: 2rem 0 1rem; }
+.home-name { font-weight: 500; font-size: clamp(2.2rem, 6vw, 3.5rem); margin: 2rem 0 1rem; }
 
 .home-nav a {
   display: block;          /* puts each link on its own line */
