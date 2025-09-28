@@ -37,7 +37,7 @@ pre { background: #f6f8fa; padding: .75rem; border-radius: 10px; overflow: auto;
   text-decoration: underline; /* optional: visible affordance */
 }
 /* Posts abstract style */
-.post-summary { margin: .25rem 0 1.25rem; font-weight: 200; font-size: 1.3rem; }
+.post-summary { margin: .25rem 0 1.25rem; font-weight: 300; font-size: 1.2rem; }
 .posts-wrap { display: grid; gap: 1rem; }
 .post-item { padding: 1rem 0; border-bottom: 1px solid rgba(0,0,0,.08); }
 .post-item:last-child { border-bottom: none; }
