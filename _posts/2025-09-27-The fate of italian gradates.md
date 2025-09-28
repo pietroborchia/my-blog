@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "The fate of italian graduates"
-summary: "A statistical analysis of employment rate and salary of italian garduates across disciplines."
+summary: "An analysis of employment rate and salary of italian garduates across disciplines."
 ---
 
 
