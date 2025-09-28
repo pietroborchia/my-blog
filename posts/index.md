@@ -9,9 +9,7 @@ title: Posts
     <h2 class="post-item-title">
       <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
     </h2>
-    <div class="post-item-meta">
-      {{ post.date | date: "%B %d, %Y" }}
-    </div>
+    <div class="post-item-meta">{{ post.date | date: "%B %d, %Y" }}</div>
     <p class="post-item-excerpt">
       {% if post.summary %}
         {{ post.summary }}
