@@ -23,9 +23,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const res  = await fetch(url);
   const text = await res.text();
 
-  // Parse CSV with headers and automatic number conversion
   const parsed = Papa.parse(text, { header: true, dynamicTyping: true });
-  // Clean rows: require the needed columns and drop the "Total" summary row
+
   const rows = parsed.data.filter(r =>
     r['Field of study'] &&
     r['Employment rate (%)'] != null &&
@@ -33,28 +32,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     String(r['Field of study']).trim().toLowerCase() !== 'total'
   );
 
-  // Map columns to arrays for Plotly
   const x = rows.map(r => r['Employment rate (%)']);   // %
   const y = rows.map(r => r['Net monthly wage (EUR)']); // EUR
   const labels = rows.map(r => r['Field of study']);
 
-  // Create scatter trace with custom hover labels
   const trace = {
     type: 'scatter',
-    mode: 'markers',
+    mode: 'markers+text',
     x, y,
-    customdata: labels, // pass labels through
+    text: labels,                 // print labels on the plot
+    textposition: 'top center',   // label placement
+    textfont: { size: 11 },
     hovertemplate:
-      '<b>%{customdata}</b>' +
-      '<br>Employment: %{x:.1f}%'+
-      '<br>Wage: €%{y:.0f}<extra></extra>'
+      'Employment: %{x:.1f}%<br>' +
+      'Wage: €%{y:.0f}<extra></extra>', // only numbers on hover
+    marker: { size: 8, opacity: 0.9 }
   };
 
-  Plotly.newPlot('graduates-scatter', [trace], {
+  const layout = {
     margin: { t: 30, r: 20, b: 60, l: 70 },
-    xaxis: { title: 'Employment rate (%)', rangemode: 'tozero', ticksuffix: '%', zeroline: false },
-    yaxis: { title: 'Net monthly wage (€)', zeroline: false },
-  });
+    xaxis: {
+      title: 'Employment rate (%)',
+      ticksuffix: '%',
+      zeroline: false,
+      rangemode: 'tozero',
+      fixedrange: true            // disable zoom/pan on x
+    },
+    yaxis: {
+      title: 'Net monthly wage (EUR)',
+      zeroline: false,
+      fixedrange: true            // disable zoom/pan on y
+    },
+    hovermode: 'closest'
+  };
+
+  const config = {
+    responsive: true,
+    displayModeBar: false, // hide toolbar
+    scrollZoom: false,
+    doubleClick: false,
+    displaylogo: false
+  };
+
+  Plotly.newPlot('graduates-scatter', [trace], layout, config);
 });
 </script>
-
