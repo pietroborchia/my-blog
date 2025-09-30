@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const rows = parsed.data.filter(r =>
     r['Field of study'] &&
     r['Employment rate (%)'] != null &&
-    r['Net monthly wage (€)'] != null &&
+    r['Net monthly wage (EUR)'] != null &&
     String(r['Field of study']).trim().toLowerCase() !== 'total'
   );
 
   // Map columns to arrays for Plotly
   const x = rows.map(r => r['Employment rate (%)']);   // %
-  const y = rows.map(r => r['Net monthly wage (€)']); // EUR
+  const y = rows.map(r => r['Net monthly wage (EUR)']); // EUR
   const labels = rows.map(r => r['Field of study']);
 
   // Create scatter trace with custom hover labels
