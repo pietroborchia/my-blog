@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     hovertemplate:
       'Employment: %{x:.1f}%<br>' +
       'Wage: €%{y:.0f}<extra></extra>', // only numbers on hover
-    marker: { size: 8, opacity: 0.9 }
+    marker: { size: 10, opacity: 0.9 }
   };
 
   const layout = {
@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       title: 'Employment rate (%)',
       ticksuffix: '%',
       zeroline: false,
-      rangemode: 'tozero',
       fixedrange: true            // disable zoom/pan on x
     },
     yaxis: {
