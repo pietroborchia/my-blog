@@ -9,31 +9,43 @@ plotly: true
 A country’s prime asset is its talent—the capable people who drive innovation and productivity. Today, that mostly requires deep specialisation in technical fields and an industrial fabric able to absorb those skills and remunerate them fairly. Building such a workforce doesn’t happen spontaneously; it depends on well-structured policies for secondary and tertiary education and credible industrial planning. Italy struggles on both counts, and the gravity of this failure is evident in two indicators for recent graduates: employment rates and salaries. <br>
 In this post I examine, through the numbers, the troubling outcomes facing Italy’s early-career cohorts on these two metrics. First, I map the distribution of results across fields of study; then I compare Italy’s performance with other OECD countries.
 
-<div id="my-scatter" style="width:100%;height:460px"></div>
+<div id="graduates-scatter" style="width:100%;height:480px"></div>
+
+<!-- Papa Parse: robust CSV parser in the browser -->
+<script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    if (!window.Plotly) return;
+document.addEventListener('DOMContentLoaded', async () => {
+  // Build a base-aware URL for GitHub Pages
+  const url = "{{ '/data/graduates_stats_1yr.csv' | relative_url }}"; // Jekyll helper
 
-    // Example data (replace with yours)
-    const x = [1.1, 2.0, 2.5, 3.2, 3.8];
-    const y = [3.4, 2.3, 4.8, 3.1, 4.2];
-    const labels = ['Alpha','Beta','Gamma','Delta','Epsilon'];
+  // Fetch CSV as text
+  const res  = await fetch(url);
+  const text = await res.text();
 
-    // Pass labels through `customdata` and reference them in `hovertemplate`
-    const trace = {
-      type: 'scatter',
-      mode: 'markers',
-      x, y,
-      customdata: labels,
-      hovertemplate: '<b>%{customdata}</b><br>x=%{x}<br>y=%{y}<extra></extra>'
-      // <extra></extra> hides the secondary hover box
-    };
+  // Parse CSV with headers and automatic number conversion
+  const parsed = Papa.parse(text, { header: true, dynamicTyping: true });
+  // Clean rows: require the needed columns and drop the "Total" summary row
+  const rows = parsed.data.filter(r =>
+    r['Field of study'] &&
+    r['Employment rate (%)'] != null &&
+    r['Net monthly earnings (€)'] != null &&
+    String(r['Field of study']).trim().toLowerCase() !== 'total'
+  );
 
-    Plotly.newPlot('my-scatter', [trace], {
-      margin: {t: 24, r: 16, b: 48, l: 56},
-      xaxis: { title: 'x' },
-      yaxis: { title: 'y' }
-    });
-  });
-</script>
+  // Map columns to arrays for Plotly
+  const x = rows.map(r => r['Employment rate (%)']);   // %
+  const y = rows.map(r => r['Net monthly earning (€)']); // EUR
+  const labels = rows.map(r => r['Field of study']);
+
+  // Create scatter trace with custom hover labels
+  const trace = {
+    type: 'scatter',
+    mode: 'markers',
+    x, y,
+    customdata: labels, // pass labels through
+    hovertemplate:
+      '<b>%{customdata}</b>' +
+      '<br>Employment: %{x:.1f}%'+
+      '<br>Wage: €%{y:.0f}<extra></extra>'
+  };
