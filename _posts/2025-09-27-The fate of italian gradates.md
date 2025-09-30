@@ -46,7 +46,7 @@ const mx = median(x);
 const my = median(y);
 
 // Quadrant-based placement: put label away from plot edges & points
-const textPositions = x.map((xi, i) => {
+let textPositions = x.map((xi, i) => {
   const yi = y[i];
   if (xi >= mx && yi >= my) return 'top left';
   if (xi >= mx && yi <  my) return 'bottom left';
