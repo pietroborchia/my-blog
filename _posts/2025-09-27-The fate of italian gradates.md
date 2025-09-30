@@ -54,6 +54,18 @@ const textPositions = x.map((xi, i) => {
   return 'bottom right';
 });
 
+// Manual overrides by label (or use indices if you prefer)
+const overrides = {
+  'Agricolture, Forestry and Veterinery': 'bottom right',
+  'Social Sciences and Communication': 'middle left',
+  'Literature and Humanities': 'top right'
+};
+
+// Apply overrides
+textPositions = textPositions.map((pos, i) =>
+  overrides[labels[i]] ?? pos
+);
+
 const trace = {
   type: 'scatter',
   mode: 'markers+text',
