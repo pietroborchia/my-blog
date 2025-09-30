@@ -17,7 +17,7 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   // Build a base-aware URL for GitHub Pages
-  const url = "{{ '/data/graduates_stats_1yr.csv' | relative_url }}"; // Jekyll helper
+  const url = "{{ '/data/27-09-2025/graduates_stats_1yr.csv' | relative_url }}"; // Jekyll helper
 
   // Fetch CSV as text
   const res  = await fetch(url);
