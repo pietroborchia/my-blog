@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const rows = parsed.data.filter(r =>
     r['Field of study'] &&
     r['Employment rate (%)'] != null &&
-    r['Net monthly earnings (€)'] != null &&
+    r['Net monthly wage (€)'] != null &&
     String(r['Field of study']).trim().toLowerCase() !== 'total'
   );
 
   // Map columns to arrays for Plotly
   const x = rows.map(r => r['Employment rate (%)']);   // %
-  const y = rows.map(r => r['Net monthly earning (€)']); // EUR
+  const y = rows.map(r => r['Net monthly wage (€)']); // EUR
   const labels = rows.map(r => r['Field of study']);
 
   // Create scatter trace with custom hover labels
@@ -49,3 +49,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       '<br>Employment: %{x:.1f}%'+
       '<br>Wage: €%{y:.0f}<extra></extra>'
   };
+
+  Plotly.newPlot('graduates-scatter', [trace], {
+    margin: { t: 30, r: 20, b: 60, l: 70 },
+    xaxis: { title: 'Employment rate (%)', rangemode: 'tozero', ticksuffix: '%', zeroline: false },
+    yaxis: { title: 'Net monthly wage (€)', zeroline: false },
+  });
+});
+</script>
+
