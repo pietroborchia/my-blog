@@ -56,7 +56,7 @@ const textPositions = x.map((xi, i) => {
 
 // Manual overrides by label (or use indices if you prefer)
 const overrides = {
-  'Agricolture, Forestry and Veterinary': 'bottom right',
+  'Agriculture, Forestry and Veterinary': 'bottom right',
   'Social Sciences and Communication': 'middle left',
   'Literature and Humanities': 'top right'
 };
