@@ -36,18 +36,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   const y = rows.map(r => r['Net monthly wage (EUR)']); // EUR
   const labels = rows.map(r => r['Field of study']);
 
-  const trace = {
-    type: 'scatter',
-    mode: 'markers+text',
-    x, y,
-    text: labels,                 // print labels on the plot
-    textposition: 'top center',   // label placement
-    textfont: { size: 11 },
-    hovertemplate:
-      'Employment: %{x:.1f}%<br>' +
-      'Wage: €%{y:.0f}<extra></extra>', // only numbers on hover
-    marker: { size: 10, opacity: 0.9 }
-  };
+  // Build per-point text positions to reduce overlaps
+  const median = arr => {
+  const s = [...arr].sort((a,b)=>a-b);
+  const m = Math.floor(s.length/2);
+  return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
+};
+const mx = median(x);
+const my = median(y);
+
+// Quadrant-based placement: put label away from plot edges & points
+const textPositions = x.map((xi, i) => {
+  const yi = y[i];
+  if (xi >= mx && yi >= my) return 'top left';
+  if (xi >= mx && yi <  my) return 'bottom left';
+  if (xi <  mx && yi >= my) return 'top right';
+  return 'bottom right';
+});
+
+const trace = {
+  type: 'scatter',
+  mode: 'markers+text',
+  x, y,
+  text: labels,
+  textposition: textPositions,    // per-point placement
+  textfont: { size: 11 },         // small, readable
+  hovertemplate:
+    'Employment: %{x:.1f}%<br>Wage: €%{y:.0f}<extra></extra>',
+  marker: { size: 8, opacity: 0.9 },
+  cliponaxis: false               // let labels spill past the axes margin
+};
 
   const layout = {
     margin: { t: 30, r: 20, b: 60, l: 70 },
