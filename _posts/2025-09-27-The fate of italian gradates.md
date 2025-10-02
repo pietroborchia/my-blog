@@ -13,7 +13,6 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
   <div id="graduates-scatter" style="width:100%;height:480px"></div>
   <figcaption id="graduates-scatter-caption">
     Employment rate vs. net monthly wage of recent graduates 1 year after graduation across different fields of study. 
-    Source: graduates_stats_1yr.csv
   </figcaption>
 </figure>
 
