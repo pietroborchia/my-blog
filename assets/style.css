@@ -48,5 +48,4 @@ pre { background: #f6f8fa; padding: .75rem; border-radius: 10px; overflow: auto;
 .post-item-excerpt { margin: 0; }
 
 /* Figure caption */
-figure.chart { margin: 1rem 0 1.25rem; }
-figure.chart figcaption { margin-top: .5rem; font-size: .95rem; color: #555; font-weight: 200;}
+figure.chart figcaption { margin-top: .5rem; font-size: .90rem; color: #555; font-weight: 150;}
