@@ -48,4 +48,4 @@ pre { background: #f6f8fa; padding: .75rem; border-radius: 10px; overflow: auto;
 .post-item-excerpt { margin: 0; }
 
 /* caption style */
-.chart-caption { margin-top: .5rem; font-size: .90rem; font-weight: 150; color: #555; }
+.chart-caption { margin-top: .5rem; font-size: .90rem; font-weight: 150; color: #555; text-align: center;}
