@@ -56,3 +56,4 @@ figure.chart {
 figure.chart > div {  /* the Plotly container */
   width: 100% !important;
 }
+figure.chart figcaption { margin-top: .5rem; font-size: .90rem; font-weight: 150; color: #555; }
