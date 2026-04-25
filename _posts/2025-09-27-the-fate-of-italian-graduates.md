@@ -8,7 +8,7 @@ plotly: true
 A country's prime asset is its talent: the capable people who drive innovation and productivity. Today, that mostly requires deep specialisation in technical fields and an industrial fabric able to absorb those skills and remunerate them fairly. Building such a workforce does not happen spontaneously; it depends on well-structured policies for secondary and tertiary education and credible industrial planning. Italy struggles on both counts, and the gravity of this failure is evident in two indicators for recent graduates: employment rates and salaries. <br>
 In this post I examine, through the numbers, the troubling outcomes facing Italy's early-career cohorts on these two metrics. First, I map the distribution of results across fields of study; then I compare Italy's performance with other OECD countries.
 
-<div id="graduates-scatter" style="width:100%;height:480px">Loading chart...</div>
+<div id="graduates-scatter" style="width:100%;height:480px"></div>
 <p class="chart-caption">Employment rate vs. net monthly wage for graduates 1 year after graduation (Source: AlmaLaurea, 2024).</p>
 
 <!-- Papa Parse: robust CSV parser in the browser -->
