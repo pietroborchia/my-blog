@@ -12,7 +12,7 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
 <p class="chart-caption">Employment rate vs. net monthly wage for graduates 1 and 5 years after graduation (Source: AlmaLaurea, 2024).</p>
 
 <div id="aggregate-timeseries" style="width:100%;height:620px"></div>
-<p class="chart-caption">Aggregate employment rate and wage over time. Solid lines show the mean across available AlmaLaurea series; shaded areas show the interquartile range (Source: AlmaLaurea, 2024).</p>
+<p class="chart-caption">Aggregate employment rate and wage over time for graduates 5 years after graduation. Solid lines show the mean across available AlmaLaurea series; shaded areas show the interquartile range (Source: AlmaLaurea, 2024).</p>
 
 <!-- Papa Parse: robust CSV parser in the browser -->
 <script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!timeSeriesRes.ok) throw new Error(`Could not load ${timeSeriesUrl}`);
     const timeSeriesText = await timeSeriesRes.text();
     const timeSeriesRows = Papa.parse(timeSeriesText, { header: true, dynamicTyping: true }).data
-      .filter(r => r.Metric && r.Year && r.Value != null);
+      .filter(r => r.Metric && r.Year && r.Value != null && String(r.Series).endsWith('5'));
 
     const quantile = (values, p) => {
       const sorted = [...values].sort((a, b) => a - b);
