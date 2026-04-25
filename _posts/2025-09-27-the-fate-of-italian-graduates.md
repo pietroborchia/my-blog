@@ -14,6 +14,9 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
 <div id="aggregate-timeseries" style="width:100%;height:620px"></div>
 <p class="chart-caption">Aggregate employment rate and wage over time for graduates 5 years after graduation. Solid lines show the mean across available AlmaLaurea series; shaded areas show the interquartile range (Source: AlmaLaurea, 2024).</p>
 
+<div id="eurostat-wage-comparison" style="width:100%;height:480px"></div>
+<p class="chart-caption">Median hourly earnings over time in selected European countries (Eurostat SES, employees in enterprises with 10 or more employees, NACE B-S excluding public administration).</p>
+
 <!-- Papa Parse: robust CSV parser in the browser -->
 <script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -21,6 +24,7 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
 document.addEventListener('DOMContentLoaded', async () => {
   const chart = document.getElementById('graduates-scatter');
   let scatterPlotted = false;
+  let aggregatePlotted = false;
 
   // Build a base-aware URL for GitHub Pages
   const datasets = [
@@ -248,10 +252,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         borderwidth: 1
       }
     }, config);
+    aggregatePlotted = true;
+
+    const wageComparisonUrl = "{{ '/data/27-09-2025/eurostat_ses_median_hourly_earnings.csv' | relative_url }}";
+    const wageComparisonRes = await fetch(wageComparisonUrl);
+    if (!wageComparisonRes.ok) throw new Error(`Could not load ${wageComparisonUrl}`);
+    const wageComparisonText = await wageComparisonRes.text();
+    const wageComparisonRows = Papa.parse(wageComparisonText, { header: true, dynamicTyping: true }).data
+      .filter(r => r.Country && r.Year && r['Median hourly earnings (EUR)'] != null);
+
+    const countries = [...new Set(wageComparisonRows.map(r => r.Country))];
+    const wageComparisonTraces = countries.map(country => {
+      const rows = wageComparisonRows
+        .filter(r => r.Country === country)
+        .sort((a, b) => a.Year - b.Year);
+
+      return {
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: country,
+        x: rows.map(r => r.Year),
+        y: rows.map(r => r['Median hourly earnings (EUR)']),
+        hovertemplate: `${country}<br>%{x}<br>Median hourly earnings: EUR %{y:.2f}<extra></extra>`
+      };
+    });
+
+    Plotly.newPlot('eurostat-wage-comparison', wageComparisonTraces, {
+      margin: { t: 20, r: 20, b: 55, l: 70 },
+      xaxis: {
+        title: 'Year',
+        fixedrange: true
+      },
+      yaxis: {
+        title: 'Median hourly earnings (EUR)',
+        fixedrange: true
+      },
+      hovermode: 'x unified',
+      legend: {
+        x: 0.02,
+        y: 0.98,
+        xanchor: 'left',
+        yanchor: 'top',
+        bgcolor: 'rgba(255,255,255,0.8)',
+        bordercolor: 'rgba(0,0,0,0.12)',
+        borderwidth: 1
+      }
+    }, config);
   } catch (error) {
     if (!scatterPlotted) chart.textContent = 'Chart data could not be loaded.';
     const aggregateChart = document.getElementById('aggregate-timeseries');
-    if (aggregateChart) aggregateChart.textContent = 'Chart data could not be loaded.';
+    if (aggregateChart && !aggregatePlotted) aggregateChart.textContent = 'Chart data could not be loaded.';
+    const wageComparisonChart = document.getElementById('eurostat-wage-comparison');
+    if (wageComparisonChart) wageComparisonChart.textContent = 'Chart data could not be loaded.';
     console.error(error);
   }
 });
