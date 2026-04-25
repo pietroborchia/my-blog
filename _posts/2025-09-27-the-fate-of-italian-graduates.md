@@ -8,7 +8,10 @@ plotly: true
 A country's prime asset is its talent: the capable people who drive innovation and productivity. Today, that mostly requires deep specialisation in technical fields and an industrial fabric able to absorb those skills and remunerate them fairly. Building such a workforce does not happen spontaneously; it depends on well-structured policies for secondary and tertiary education and credible industrial planning. Italy struggles on both counts, and the gravity of this failure is evident in two indicators for recent graduates: employment rates and salaries. <br>
 In this post I examine, through the numbers, the troubling outcomes facing Italy's early-career cohorts on these two metrics. First, I map the distribution of results across fields of study; then I compare Italy's performance with other OECD countries.
 
-<div id="graduates-scatter" style="width:100%;height:480px"></div>
+<div class="chart-wide chart-grid">
+  <div id="graduates-scatter-1yr" class="chart-panel"></div>
+  <div id="graduates-scatter-5yr" class="chart-panel"></div>
+</div>
 <p class="chart-caption">Employment rate vs. net monthly wage for graduates 1 and 5 years after graduation (Source: AlmaLaurea, 2024).</p>
 
 <!-- Papa Parse: robust CSV parser in the browser -->
@@ -16,19 +19,22 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  const chart = document.getElementById('graduates-scatter');
+  const charts = {
+    '1 year': document.getElementById('graduates-scatter-1yr'),
+    '5 years': document.getElementById('graduates-scatter-5yr')
+  };
 
   // Build a base-aware URL for GitHub Pages
   const datasets = [
     {
       name: '1 year',
       url: "{{ '/data/27-09-2025/graduates_stats_1yr.csv' | relative_url }}",
-      marker: { size: 8, opacity: 0.9, symbol: 'circle' }
+      title: '1 year after graduation'
     },
     {
       name: '5 years',
       url: "{{ '/data/27-09-2025/graduates_stats_5yr.csv' | relative_url }}",
-      marker: { size: 9, opacity: 0.9, symbol: 'diamond' }
+      title: '5 years after graduation'
     }
   ];
 
@@ -58,65 +64,50 @@ document.addEventListener('DOMContentLoaded', async () => {
       throw new Error('No chart rows found');
     }
 
-    // Build per-point text positions to reduce overlaps
-    const median = arr => {
-      const s = [...arr].sort((a, b) => a - b);
-      const m = Math.floor(s.length / 2);
-      return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-    };
     const x = series.flatMap(dataset => dataset.rows.map(r => r['Employment rate (%)']));
     const y = series.flatMap(dataset => dataset.rows.map(r => r['Net monthly wage (EUR)']));
-    const mx = median(x);
-    const my = median(y);
+    const xRange = [Math.floor(Math.min(...x) / 5) * 5, Math.ceil(Math.max(...x) / 5) * 5];
+    const yRange = [Math.floor(Math.min(...y) / 100) * 100, Math.ceil(Math.max(...y) / 100) * 100];
 
-    // Quadrant-based placement: put label away from plot edges and points
-    const textPosition = (xi, yi) => {
-      if (xi >= mx && yi >= my) return 'top left';
-      if (xi >= mx && yi <  my) return 'bottom left';
-      if (xi <  mx && yi >= my) return 'top right';
-      return 'bottom right';
-    };
-
-    const traces = series.map(dataset => {
+    const makeTrace = dataset => {
       const x = dataset.rows.map(r => r['Employment rate (%)']);
       const y = dataset.rows.map(r => r['Net monthly wage (EUR)']);
       const labels = dataset.rows.map(r => r['Field of study']);
 
       return {
         type: 'scatter',
-        mode: dataset.name === '1 year' ? 'markers+text' : 'markers',
-        name: dataset.name,
+        mode: 'markers',
+        showlegend: false,
         x, y,
         text: labels,
-        textposition: x.map((xi, i) => textPosition(xi, y[i])),
-        textfont: { size: dataset.name === '1 year' ? 11 : 10 },
         hovertemplate:
           `${dataset.name}<br>%{text}<br>Employment: %{x:.1f}%<br>Wage: EUR %{y:.0f}<extra></extra>`,
-        marker: dataset.marker,
+        marker: { size: 8, opacity: 0.85 },
         cliponaxis: false
       };
-    });
+    };
 
-    const layout = {
-      margin: { t: 30, r: 20, b: 60, l: 70 },
+    const makeLayout = dataset => ({
+      title: {
+        text: dataset.title,
+        font: { size: 15 }
+      },
+      margin: { t: 45, r: 20, b: 55, l: 65 },
       xaxis: {
         title: 'Employment rate (%)',
         ticksuffix: '%',
         zeroline: false,
+        range: xRange,
         fixedrange: true
       },
       yaxis: {
         title: 'Net monthly wage (EUR)',
         zeroline: false,
+        range: yRange,
         fixedrange: true
       },
-      hovermode: 'closest',
-      legend: {
-        orientation: 'h',
-        x: 0,
-        y: 1.12
-      }
-    };
+      hovermode: 'closest'
+    });
 
     const config = {
       responsive: true,
@@ -126,9 +117,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       displaylogo: false
     };
 
-    Plotly.newPlot(chart, traces, layout, config);
+    series.forEach(dataset => {
+      Plotly.newPlot(charts[dataset.name], [makeTrace(dataset)], makeLayout(dataset), config);
+    });
   } catch (error) {
-    chart.textContent = 'Chart data could not be loaded.';
+    Object.values(charts).forEach(chart => {
+      if (chart) chart.textContent = 'Chart data could not be loaded.';
+    });
     console.error(error);
   }
 });
