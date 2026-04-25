@@ -11,12 +11,16 @@ In this post I examine, through the numbers, the troubling outcomes facing Italy
 <div id="graduates-scatter" style="width:100%;height:480px"></div>
 <p class="chart-caption">Employment rate vs. net monthly wage for graduates 1 and 5 years after graduation (Source: AlmaLaurea, 2024).</p>
 
+<div id="aggregate-timeseries" style="width:100%;height:620px"></div>
+<p class="chart-caption">Aggregate employment rate and wage over time. Solid lines show the mean across available AlmaLaurea series; shaded areas show the interquartile range (Source: AlmaLaurea, 2024).</p>
+
 <!-- Papa Parse: robust CSV parser in the browser -->
 <script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   const chart = document.getElementById('graduates-scatter');
+  let scatterPlotted = false;
 
   // Build a base-aware URL for GitHub Pages
   const datasets = [
@@ -117,8 +121,137 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     Plotly.newPlot(chart, traces, layout, config);
+    scatterPlotted = true;
+
+    const timeSeriesUrl = "{{ '/data/27-09-2025/almalaurea_aggregate_timeseries.csv' | relative_url }}";
+    const timeSeriesRes = await fetch(timeSeriesUrl);
+    if (!timeSeriesRes.ok) throw new Error(`Could not load ${timeSeriesUrl}`);
+    const timeSeriesText = await timeSeriesRes.text();
+    const timeSeriesRows = Papa.parse(timeSeriesText, { header: true, dynamicTyping: true }).data
+      .filter(r => r.Metric && r.Year && r.Value != null);
+
+    const quantile = (values, p) => {
+      const sorted = [...values].sort((a, b) => a - b);
+      const pos = (sorted.length - 1) * p;
+      const base = Math.floor(pos);
+      const rest = pos - base;
+      return sorted[base + 1] === undefined
+        ? sorted[base]
+        : sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+    };
+
+    const summarizeMetric = metric => {
+      const byYear = new Map();
+      timeSeriesRows
+        .filter(r => r.Metric === metric)
+        .forEach(r => {
+          if (!byYear.has(r.Year)) byYear.set(r.Year, []);
+          byYear.get(r.Year).push(r.Value);
+        });
+
+      return [...byYear.entries()]
+        .sort(([a], [b]) => a - b)
+        .map(([year, values]) => ({
+          year,
+          mean: values.reduce((sum, value) => sum + value, 0) / values.length,
+          q1: quantile(values, 0.25),
+          q3: quantile(values, 0.75)
+        }));
+    };
+
+    const buildBandTraces = ({ data, name, axis, color, hoverSuffix }) => [
+      {
+        type: 'scatter',
+        x: data.map(d => d.year),
+        y: data.map(d => d.q3),
+        mode: 'lines',
+        line: { width: 0 },
+        hoverinfo: 'skip',
+        showlegend: false,
+        xaxis: axis.x,
+        yaxis: axis.y
+      },
+      {
+        type: 'scatter',
+        x: data.map(d => d.year),
+        y: data.map(d => d.q1),
+        mode: 'lines',
+        fill: 'tonexty',
+        fillcolor: color.band,
+        line: { width: 0 },
+        name: `${name} IQR`,
+        hoverinfo: 'skip',
+        xaxis: axis.x,
+        yaxis: axis.y
+      },
+      {
+        type: 'scatter',
+        x: data.map(d => d.year),
+        y: data.map(d => d.mean),
+        mode: 'lines+markers',
+        name: `${name} mean`,
+        line: { color: color.line, width: 2 },
+        marker: { size: 5 },
+        hovertemplate: `${name}<br>%{x}<br>Mean: %{y:.1f}${hoverSuffix}<extra></extra>`,
+        xaxis: axis.x,
+        yaxis: axis.y
+      }
+    ];
+
+    const employmentSummary = summarizeMetric('employment_rate');
+    const wageSummary = summarizeMetric('wage_eur');
+    const aggregateTraces = [
+      ...buildBandTraces({
+        data: employmentSummary,
+        name: 'Employment rate',
+        axis: { x: 'x', y: 'y' },
+        color: { line: '#2563eb', band: 'rgba(37,99,235,0.18)' },
+        hoverSuffix: '%'
+      }),
+      ...buildBandTraces({
+        data: wageSummary,
+        name: 'Net monthly wage',
+        axis: { x: 'x2', y: 'y2' },
+        color: { line: '#059669', band: 'rgba(5,150,105,0.18)' },
+        hoverSuffix: ' EUR'
+      })
+    ];
+
+    Plotly.newPlot('aggregate-timeseries', aggregateTraces, {
+      grid: { rows: 2, columns: 1, pattern: 'independent' },
+      margin: { t: 20, r: 20, b: 50, l: 70 },
+      xaxis: { fixedrange: true },
+      yaxis: {
+        title: 'Employment rate (%)',
+        ticksuffix: '%',
+        fixedrange: true,
+        domain: [0.56, 1]
+      },
+      xaxis2: {
+        title: 'Year of survey',
+        fixedrange: true,
+        domain: [0, 1]
+      },
+      yaxis2: {
+        title: 'Net monthly wage (EUR)',
+        fixedrange: true,
+        domain: [0, 0.44]
+      },
+      hovermode: 'x unified',
+      legend: {
+        x: 0.02,
+        y: 0.98,
+        xanchor: 'left',
+        yanchor: 'top',
+        bgcolor: 'rgba(255,255,255,0.8)',
+        bordercolor: 'rgba(0,0,0,0.12)',
+        borderwidth: 1
+      }
+    }, config);
   } catch (error) {
-    chart.textContent = 'Chart data could not be loaded.';
+    if (!scatterPlotted) chart.textContent = 'Chart data could not be loaded.';
+    const aggregateChart = document.getElementById('aggregate-timeseries');
+    if (aggregateChart) aggregateChart.textContent = 'Chart data could not be loaded.';
     console.error(error);
   }
 });
