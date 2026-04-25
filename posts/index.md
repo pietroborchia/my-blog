@@ -3,8 +3,6 @@ layout: default
 title: Posts
 ---
 
-Essays and notes on physics, data analysis, education, and public policy.
-
 <div class="posts-wrap">
 {% for post in site.posts %}
   <article class="post-item">
